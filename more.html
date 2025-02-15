@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Sketches</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=SUSE:wght@100..800&display=swap" rel="stylesheet">
+
+    <style>
+        .gallery-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .gallery-header h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .gallery-header p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        .sketch-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 1.3s ease;
+            cursor: pointer;
+        }
+
+        .sketch-item:hover {
+            transform: translateY(-5px);
+        }
+
+        /* .sketch-item img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            display: block;
+        } */
+
+        .sketch-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: rgb(0, 0, 0);
+            padding: 15px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sketch-item:hover .sketch-overlay {
+            transform: translateY(0);
+        }
+
+        .sketch-overlay h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2em;
+        }
+
+        .sketch-overlay p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+        }
+
+        /* Dots container */
+        .slide-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .slide-nav:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .slide-nav.prev {
+            left: 10px;
+        }
+
+        .slide-nav.next {
+            right: 10px;
+        }
+
+        /* Show navigation buttons on hover */
+        .sketch-item:hover .slide-nav {
+            opacity: 1;
+        }
+
+        /* Arrow icons */
+        .slide-nav::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid white;
+            border-right: 2px solid white;
+            display: inline-block;
+        }
+
+        .slide-nav.prev::before {
+            transform: rotate(-135deg);
+            margin-left: 5px;
+        }
+
+        .slide-nav.next::before {
+            transform: rotate(45deg);
+            margin-right: 5px;
+        }
+
+        /* Update existing slideshow styles */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s ease;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        /* Adjust overlay to not interfere with dots */
+        .sketch-overlay {
+            bottom: 0px;
+        }
+
+        /* Add these new styles */
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fullscreen-modal.active {
+            display: flex;
+        }
+
+        .fullscreen-content {
+            max-width: 90%;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .fullscreen-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Portfolio</div>
+            <div class="nav-links">
+                <ul>
+                    <li class="n1"><a href="index.html">Home</a></li>
+                    <li class="n2"><a href="about.html">About</a></li>
+                    <li class="n3"><a href="work.html">Work</a></li>
+                    <li class="n4" id="active4"><a href="more.html">More</a></li>
+                </ul>
+            </div>
+            <a href="index.html" id="touch"><div class="touch">Get in touch</div></a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="gallery-container">
+            <div class="gallery-header">
+                <h1>My Sketches</h1>
+                <p>A collection of my artistic journey through pencil and paper</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="sketch-item">
+                    <div class="slideshow-container">
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 21.31.01.jpeg" alt="Portrait Study 2">
+                        </div>
+                        <button class="slide-nav prev" aria-label="Previous image"></button>
+                        <button class="slide-nav next" aria-label="Next image"></button>
+                    </div>
+                    <div class="sketch-overlay">
+                        <h3>Portrait Studies</h3>
+                        <p>A series of detailed pencil portraits exploring light and shadow</p>
+                    </div>
+                </div>
+
+
+                <div class="sketch-item">
+                    <div class="slideshow-container">
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 21.31.02 (1).jpeg" alt="Portrait Study 1">
+                        </div>
+                        <button class="slide-nav prev" aria-label="Previous image"></button>
+                        <button class="slide-nav next" aria-label="Next image"></button>
+                    </div>
+                    <div class="sketch-overlay">
+                        <h3>Portrait Studies</h3>
+                        <p>A series of detailed pencil portraits exploring light and shadow</p>
+                    </div>
+                </div>
+
+                <div class="sketch-item">
+                    <div class="slideshow-container">
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 20.29.59 (1).jpeg" alt="Portrait Study 1">
+                        </div>
+                        <button class="slide-nav prev" aria-label="Previous image"></button>
+                        <button class="slide-nav next" aria-label="Next image"></button>
+                    </div>
+                    <div class="sketch-overlay">
+                        <h3>Portrait Studies</h3>
+                        <p>A series of detailed pencil portraits exploring light and shadow</p>
+                    </div>
+                </div>
+
+                <div class="sketch-item">
+                    <div class="slideshow-container">
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 20.29.59.jpeg" alt="Portrait Study 1">
+                        </div>
+                        <button class="slide-nav prev" aria-label="Previous image"></button>
+                        <button class="slide-nav next" aria-label="Next image"></button>
+                    </div>
+                    <div class="sketch-overlay">
+                        <h3>Portrait Studies</h3>
+                        <p>A series of detailed pencil portraits exploring light and shadow</p>
+                    </div>
+                </div>
+
+                <div class="sketch-item">
+                    <div class="slideshow-container">
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 21.31.01 (1).jpeg" alt="Portrait Study 1">
+                        </div>
+                        <div class="slide">
+                            <img src="IMG_20240127_224716.jpg" alt="Portrait Study 2">
+                        </div>
+                        <div class="slide">
+                            <img src="IMG_20240509_161206_735.webp" alt="Portrait Study 3">
+                        </div>
+                        <button class="slide-nav prev" aria-label="Previous image"></button>
+                        <button class="slide-nav next" aria-label="Next image"></button>
+                    </div>
+                    <div class="sketch-overlay">
+                        <h3>Portrait Studies</h3>
+                        <p>A series of detailed pencil portraits exploring light and shadow</p>
+                    </div>
+                </div>
+
+                <div class="sketch-item">
+                    <div class="slideshow-container">
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 21.31.03.jpeg" alt="Portrait Study 1">
+                        </div>
+                        
+                        <button class="slide-nav prev" aria-label="Previous image"></button>
+                        <button class="slide-nav next" aria-label="Next image"></button>
+                    </div>
+                    <div class="sketch-overlay">
+                        <h3>Portrait Studies</h3>
+                        <p>A series of detailed pencil portraits exploring light and shadow</p>
+                    </div>
+                </div>
+
+                <div class="sketch-item">
+                    <div class="slideshow-container">
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 21.31.04 (1).jpeg" alt="Portrait Study 1">
+                        </div>
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 21.31.04 (2).jpeg" alt="Portrait Study 2">
+                        </div>
+                        <button class="slide-nav prev" aria-label="Previous image"></button>
+                        <button class="slide-nav next" aria-label="Next image"></button>
+                    </div>
+                    <div class="sketch-overlay">
+                        <h3>Portrait Studies</h3>
+                        <p>A series of detailed pencil portraits exploring light and shadow</p>
+                    </div>
+                </div>
+
+                <div class="sketch-item">
+                    <div class="slideshow-container">
+                        <div class="slide">
+                            <img src="img/WhatsApp Image 2025-02-14 at 21.31.04 (2).jpeg" alt="Portrait Study 1">
+                        </div>
+                       
+                        <button class="slide-nav prev" aria-label="Previous image"></button>
+                        <button class="slide-nav next" aria-label="Next image"></button>
+                    </div>
+                    <div class="sketch-overlay">
+                        <h3>Portrait Studies</h3>
+                        <p>A series of detailed pencil portraits exploring light and shadow</p>
+                    </div>
+                </div>
+
+                <!-- Repeat similar structure for remaining 4 sketch items -->
+
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-text">
+            <p>© 2025 Piyush Dewangan. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Add this modal HTML right before the closing body tag -->
+    <div class="fullscreen-modal">
+        <div class="fullscreen-content">
+            <button class="close-modal">&times;</button>
+            <img src="" alt="Fullscreen view">
+        </div>
+    </div>
+
+    <script>
+        function initSlideshows() {
+            document.querySelectorAll('.sketch-item').forEach(item => {
+                const slides = item.querySelectorAll('.slide');
+                let currentSlide = 0;
+                const totalSlides = slides.length;
+
+                // Set initial active state
+                slides[0].classList.add('active');
+
+                // Navigation function
+                function navigateSlide(direction) {
+                    slides[currentSlide].classList.remove('active');
+                    
+                    if (direction === 'next') {
+                        currentSlide = (currentSlide + 1) % totalSlides;
+                    } else {
+                        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                    }
+                    
+                    slides[currentSlide].classList.add('active');
+                }
+
+                // Add event listeners to navigation buttons
+                item.querySelector('.prev').addEventListener('click', () => {
+                    navigateSlide('prev');
+                });
+
+                item.querySelector('.next').addEventListener('click', () => {
+                    navigateSlide('next');
+                });
+            });
+        }
+
+        // Add this new code after the existing slideshow initialization
+        function initFullscreenView() {
+            const modal = document.querySelector('.fullscreen-modal');
+            const modalImg = modal.querySelector('img');
+            const closeBtn = modal.querySelector('.close-modal');
+
+            document.querySelectorAll('.sketch-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    // Prevent click if clicking navigation buttons
+                    if (e.target.classList.contains('slide-nav')) {
+                        return;
+                    }
+                    
+                    const activeSlide = item.querySelector('.slide.active img');
+                    modalImg.src = activeSlide.src;
+                    modalImg.alt = activeSlide.alt;
+                    modal.classList.add('active');
+                });
+            });
+
+            // Close modal when clicking close button or outside the image
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+
+            // Add keyboard support for closing modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize both slideshows and fullscreen view when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initSlideshows();
+            initFullscreenView();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=SUSE:wght@100..800&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">Portfolio</div>
+      <div class="nav-links">
+        <ul>
+          <li class="n1" id="active1"><a href="index.html">Home</a></li>
+          <li class="n2"><a href="about.html">About</a></li>
+          <li class="n3"><a href="work.html">Work</a></li>
+          <li class="n4"><a href="more.html">More</a></li>
+        </ul>
+      </div>
+      <a href="#contact" id="touch"><div class="touch">Get in touch</div></a>
+    </nav>
+  </header>
+
+
+  <main>
+    <section>
+      <div class="hero">
+        <div class="hero-img">
+          <img src="img/Picsart_24-05-14_12-42-27-605.jpg" alt="hero">
+        </div>
+        
+        <div class="hero-text">
+          <h1>Piyush Dewangan</h1>
+          <h4>Passionate software engineer with a focus on building scalable web applications.</h4>
+        </div>
+        
+      </div>
+    </section>
+
+
+    <section>
+      <div class="contact" id="contact">
+        <div class="contact-text">
+          <h1>Contact Me</h1>
+          <h4>Let's work together to create something amazing.</h4>
+        </div>
+        <div class="contact-form">
+          <form action="">
+            <input type="text" placeholder="Name">
+            <input type="email" placeholder="Email">
+            <textarea name="" id="" cols="30" rows="10"></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
+        
+        
+
+      </div>
+    </section>
+  </main>
+
+
+  <footer>
+    <div class="footer-text">
+      <p>© 2025 Piyush Dewangan. All rights reserved.</p>
+    </div>
+    
+  </footer>
+
+  <script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const name = document.querySelector('input[type="text"]').value;
+      const email = document.querySelector('input[type="email"]').value;
+      const message = document.querySelector('textarea').value;
+
+      if (!name || !email || !message) {
+        e.preventDefault();
+        alert('Please fill in all fields before submitting.');
+        return false;
+      }
+
+      if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        e.preventDefault(); 
+        alert('Please enter a valid email address.');
+        return false;
+      }
+    });
+  </script>
+</body>
+</html>
